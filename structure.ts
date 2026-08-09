@@ -1,8 +1,9 @@
 import {DocumentTextIcon} from '@sanity/icons/DocumentText'
 import {TagIcon} from '@sanity/icons/Tag'
+import {CalendarIcon} from '@sanity/icons/Calendar'
 import type {StructureResolver} from 'sanity/structure'
 
-const SINGLETON_TYPES = new Set(['offersPage'])
+const SINGLETON_TYPES = new Set(['offersPage', 'eventsMilestonesPage'])
 
 export const structure: StructureResolver = (S) =>
   S.list()
@@ -46,9 +47,55 @@ export const structure: StructureResolver = (S) =>
                 ),
             ]),
         ),
+      S.listItem()
+        .title('Events & Milestones Page')
+        .icon(DocumentTextIcon)
+        .child(
+          S.document()
+            .schemaType('eventsMilestonesPage')
+            .documentId('eventsMilestonesPage')
+            .title('Events & Milestones Page'),
+        ),
+      S.listItem()
+        .title('Events & Milestones')
+        .icon(CalendarIcon)
+        .child(
+          S.list()
+            .title('Events & Milestones')
+            .items([
+              S.documentTypeListItem('eventMilestone').title('All'),
+              ...[
+                ['Awards', 'award'],
+                ['Fashion Shows', 'fashionShow'],
+                ['Special Events', 'specialEvent'],
+                ['Company Milestones', 'companyMilestone'],
+                ['Press Features', 'pressFeature'],
+              ].map(([title, kind]) =>
+                S.listItem()
+                  .title(title)
+                  .child(
+                    S.documentList()
+                      .title(title)
+                      .schemaType('eventMilestone')
+                      .filter('_type == "eventMilestone" && kind == $kind')
+                      .params({kind}),
+                  ),
+              ),
+              S.listItem()
+                .title('Featured')
+                .child(
+                  S.documentList()
+                    .title('Featured')
+                    .schemaType('eventMilestone')
+                    .filter('_type == "eventMilestone" && featured == true'),
+                ),
+            ]),
+        ),
       S.divider(),
       ...S.documentTypeListItems().filter(
         (listItem) =>
-          !SINGLETON_TYPES.has(listItem.getId() as string) && listItem.getId() !== 'promotion',
+          !SINGLETON_TYPES.has(listItem.getId() as string) &&
+          listItem.getId() !== 'promotion' &&
+          listItem.getId() !== 'eventMilestone',
       ),
     ])
