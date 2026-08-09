@@ -1000,31 +1000,31 @@ export const gownTempType = defineType({
     defineField({
       name: "longGownPicture",
       type: "array",
-      of: [{ type: "image" }],
+      of: [{ type: "image", options: { hotspot: true } }],
       title: "Long Gown Picture",
     }),
     defineField({
       name: "longGownPictureAlt",
       type: "array",
-      of: [{ type: "image" }],
+      of: [{ type: "image", options: { hotspot: true } }],
       title: "Long Gown Picture Alt (Design 2 / Corset 2)",
     }),
     defineField({
       name: "filipinianaPicture",
       type: "array",
-      of: [{ type: "image" }],
+      of: [{ type: "image", options: { hotspot: true } }],
       title: "Filipiniana Picture",
     }),
     defineField({
       name: "pixiePicture",
       type: "array",
-      of: [{ type: "image" }],
+      of: [{ type: "image", options: { hotspot: true } }],
       title: "Pixie Picture",
     }),
     defineField({
       name: "trainPicture",
       type: "array",
-      of: [{ type: "image" }],
+      of: [{ type: "image", options: { hotspot: true } }],
       title: "Train Picture",
     }),
     defineField({
