@@ -1,0 +1,14 @@
+export const gownV2EligibilityOptions = {
+  upcomingDesign: ['No', 'Yes', 'Coming Soon', 'Pixie - Coming Soon', 'No, Pixie - Coming Soon', 'Coming Soon, Pixie - Coming Soon', 'Pixie - Coming Soon, No'],
+  gownStatus: ['No Changes Planned', 'Retiring Soon', 'To Be Replaced', 'Limited-Time Discount', 'Price Increase Upon Replacement'],
+  gownFeatures: ['Cultural', 'Gowns', 'Kids'],
+  wardrobeFeatures: ['A-Line (W/ Slim Petticoat)', 'Ball gown', 'Filipiniana', 'High Waistline & Maternity Dress', 'Maxi', 'Medium volume', 'Mermaid & fitted', 'Pixie - Short dresses', 'Plus Size', 'Sagala and Flores De mayo', 'Underarm Coverage', 'With Slit', 'With Trail'],
+  bestFor: ['Birthdays', 'Black Tie', 'Brand & PR Events', 'Bridesmaid & Wedding Guests', 'Buwan ng Wika', 'Concert', 'Corporate Functions', 'Cultural Events', 'Debut & Birthdays', 'Evening Gala', 'Frame Her & Photoshoots', 'Graduation', 'Intimate Parties & Date Nights', 'Oath Taking', 'Pageants', 'Pageants & Competitions', 'Photoshoot', 'Photoshoots', 'Prom & Grand Balls', 'Prom & Grand ball', 'Sagala & Flores de Mayo', 'Sagala / Flores de Mayo', 'Special Guests & Pixie Dresses', 'Themed Events'],
+  tags: ['Alice in wonderland', 'Alice in the wonderland', 'Anime Inspired', 'Aurora Borealis', 'Autumn', 'Avant Garde', 'Barbie', 'Baroque', 'Book Character', 'Bridgerton', 'Caraval and Carnival', 'Celestial', 'Clean Girl', 'Coquette', 'Cottagecore', 'Dark Fantasy', 'Disney', 'Dreamlike', 'Eclipse', 'Empire Waist', 'Enchanted', 'Enchanted Forest and Enchanted Garden', 'Ethereal', 'Euphoria', 'European Court', 'Fairy and Fairytale', 'Fantasy', 'Filpiniana', 'Floral', 'Gala', 'Galaxy and Cosmic', 'Garden Glamour', 'Glam', 'Glitz and Glamour', 'Goddess', 'Good and Evil', 'Gothic', 'Great Gatsby', 'Greek Goddess', 'Heavenly', 'Historical', 'Historical Manhwa', 'Hollywood', 'Lantern', 'Lolita', 'Manwha', 'Mardi Gras', 'Masquerade', 'Medieval', 'Mermaid', 'Minimalist', 'Ocean', 'Old money', 'Oscar night', 'Pearl', 'Princess', 'Red Carpet', 'Regal', 'Regal and Royalty', 'Regency', 'Renaissance', 'Rococo', 'Royal Court', 'Royalty', 'Siren', 'Spring Blossom', 'Star Light', 'Starlight', 'Starry night', 'Summer', 'Sun Rise and Sun Set', 'Sunrise and Sunset', 'Tudor', 'UN Costumes / National Attire', 'Under the sea', 'Vampire', 'Venetian', 'Victorian', 'Vintage', 'Winter / Ice'],
+  colors: ['Beige', 'Black', 'Blue', 'Brown', 'Cream', 'Gold', 'Gray', 'Green', 'Peach', 'Pink', 'Purple', 'Red', 'Silver', 'White', 'Yellow'],
+  ageGroups: ['Pre-Teen', 'Teen to Adult', 'Young Kids'],
+  petticoats: ['Meium Petticoat', 'No Hoops Petticoat', 'No Petticoat', 'Pixie Petticoat', 'Premium Petticoat', 'Slim Petticoat'],
+} as const
+
+export const asSanityList = (values: readonly string[]) =>
+  values.map((value) => ({title: value, value}))

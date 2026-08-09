@@ -1,5 +1,6 @@
 import {TagIcon} from '@sanity/icons/Tag'
 import {defineArrayMember, defineField, defineType} from 'sanity'
+import {asSanityList, gownV2EligibilityOptions} from './gownV2Eligibility'
 
 export const promotionCategoryOptions = [
   {title: 'Limited-Time Discount', value: 'limitedTimeDiscount'},
@@ -8,17 +9,6 @@ export const promotionCategoryOptions = [
   {title: 'Loyalty & Rewards', value: 'loyaltyReward'},
   {title: 'Partner Offer & Experience', value: 'partnerExperience'},
 ] as const
-
-const collectionOptions = [
-  'Modern Glamour',
-  'Royal Historical Eras',
-  'Fairytale Fantasy',
-  'Nature Seasonal Realms',
-  'Celestial Dreamlike',
-  'Ocean Realm',
-  'Cultural and Mythic Icons',
-  'Your Favorite Character',
-].map((value) => ({title: value, value}))
 
 const rentalVariantOptions = [
   {title: 'Standard rental', value: 'standard'},
@@ -39,7 +29,7 @@ export const promotionType = defineType({
   initialValue: {
     category: 'limitedTimeDiscount',
     benefitType: 'percentage',
-    targetMode: 'selectedGowns',
+    eligibilityMode: 'selectedV2Gowns',
     rentalVariants: ['standard'],
     serviceRegions: ['metroManila', 'luzon', 'outsideLuzon'],
     priority: 0,
@@ -170,47 +160,76 @@ export const promotionType = defineType({
       validation: (rule) => rule.required().min(1),
     }),
     defineField({
-      name: 'targetMode',
+      name: 'eligibilityMode',
       title: 'Eligible gowns',
       type: 'string',
       group: 'eligibility',
       options: {
         layout: 'radio',
         list: [
-          {title: 'All rental gowns', value: 'allGowns'},
-          {title: 'Selected collections', value: 'collections'},
-          {title: 'Selected gowns', value: 'selectedGowns'},
+          {title: 'All V2 gowns', value: 'allV2Gowns'},
+          {title: 'V2 gown filters', value: 'v2Filters'},
+          {title: 'Selected V2 gowns', value: 'selectedV2Gowns'},
         ],
       },
       validation: (rule) => rule.required(),
     }),
     defineField({
-      name: 'eligibleCollections',
-      title: 'Eligible collections',
-      type: 'array',
+      name: 'v2Filters',
+      title: 'Eligible V2 gown filters',
+      type: 'object',
       group: 'eligibility',
-      hidden: ({document}) => document?.targetMode !== 'collections',
-      of: [defineArrayMember({type: 'string'})],
-      options: {list: collectionOptions},
+      description: 'A gown must match every populated filter group. Within a group, matching any selected value is enough.',
+      hidden: ({document}) => document?.eligibilityMode !== 'v2Filters',
+      fields: [
+        ...([
+          ['upcomingDesign', 'Upcoming Design & Evolution', gownV2EligibilityOptions.upcomingDesign],
+          ['gownStatus', 'Gown Status', gownV2EligibilityOptions.gownStatus],
+          ['gownFeatures', 'Gown Features', gownV2EligibilityOptions.gownFeatures],
+          ['wardrobeFeatures', 'Wardrobe Features', gownV2EligibilityOptions.wardrobeFeatures],
+          ['bestFor', 'Best For', gownV2EligibilityOptions.bestFor],
+          ['tags', 'Tags', gownV2EligibilityOptions.tags],
+          ['colors', 'Color', gownV2EligibilityOptions.colors],
+          ['ageGroups', 'Age Group', gownV2EligibilityOptions.ageGroups],
+          ['petticoats', 'Petticoat Types', gownV2EligibilityOptions.petticoats],
+        ] as const).map(([name, title, values]) => defineField({
+          name,
+          title,
+          type: 'array',
+          of: [defineArrayMember({type: 'string'})],
+          options: {list: asSanityList(values)},
+          validation: (rule) => rule.unique(),
+        })),
+        defineField({
+          name: 'corsetCounts',
+          title: 'Corset Count',
+          description: 'Enter exact Corset Count values used by V2 gown documents.',
+          type: 'array',
+          of: [defineArrayMember({type: 'string'})],
+          options: {layout: 'tags'},
+          validation: (rule) => rule.unique(),
+        }),
+      ],
       validation: (rule) =>
-        rule.unique().custom((value, context) => {
-          if (context.document?.targetMode !== 'collections') return true
-          return Array.isArray(value) && value.length > 0
+        rule.custom((value, context) => {
+          if (context.document?.eligibilityMode !== 'v2Filters') return true
+          if (!value || typeof value !== 'object') return 'Set at least one V2 gown filter'
+          return Object.values(value).some((entry) => Array.isArray(entry) && entry.length > 0)
             ? true
-            : 'Select at least one collection'
+            : 'Set at least one V2 gown filter'
         }),
     }),
     defineField({
-      name: 'eligibleGowns',
-      title: 'Eligible gowns',
+      name: 'eligibleV2Gowns',
+      title: 'Eligible V2 gowns',
       type: 'array',
       group: 'eligibility',
-      hidden: ({document}) => document?.targetMode !== 'selectedGowns',
-      of: [defineArrayMember({type: 'reference', to: [{type: 'gown'}]})],
+      hidden: ({document}) => document?.eligibilityMode !== 'selectedV2Gowns',
+      of: [defineArrayMember({type: 'reference', to: [{type: 'gown_temp'}]})],
       validation: (rule) =>
         rule.unique().custom((value, context) => {
-          if (context.document?.targetMode !== 'selectedGowns') return true
-          return Array.isArray(value) && value.length > 0 ? true : 'Select at least one gown'
+          if (context.document?.eligibilityMode !== 'selectedV2Gowns') return true
+          return Array.isArray(value) && value.length > 0 ? true : 'Select at least one V2 gown'
         }),
     }),
     defineField({
