@@ -92,6 +92,7 @@ export const promotionType = defineType({
       title: 'Campaign image',
       type: 'image',
       group: 'content',
+      description: 'Optional. Promotions without an image use a text-first card layout.',
       options: {hotspot: true},
       fields: [
         defineField({
@@ -101,7 +102,6 @@ export const promotionType = defineType({
           validation: (rule) => rule.required(),
         }),
       ],
-      validation: (rule) => rule.required(),
     }),
     defineField({
       name: 'benefitType',
