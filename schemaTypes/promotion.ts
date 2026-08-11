@@ -33,6 +33,7 @@ export const promotionType = defineType({
     rentalVariants: ['standard'],
     serviceRegions: ['metroManila', 'luzon', 'outsideLuzon'],
     priority: 0,
+    isVisible: true,
     featureOnHomepage: false,
   },
   groups: [
@@ -273,6 +274,15 @@ export const promotionType = defineType({
         }),
     }),
     defineField({
+      name: 'isVisible',
+      title: 'Visible on website',
+      type: 'boolean',
+      group: 'presentation',
+      description:
+        'Turn this off to hide the promotion everywhere on the website and prevent its discount from applying, without changing its schedule or unpublishing it.',
+      initialValue: true,
+    }),
+    defineField({
       name: 'priority',
       title: 'Display priority',
       type: 'number',
@@ -306,15 +316,16 @@ export const promotionType = defineType({
       category: 'category',
       startsAt: 'startsAt',
       endsAt: 'endsAt',
+      isVisible: 'isVisible',
       media: 'campaignImage',
     },
-    prepare({title, internalName, category, startsAt, endsAt, media}) {
+    prepare({title, internalName, category, startsAt, endsAt, isVisible, media}) {
       const categoryTitle =
         promotionCategoryOptions.find((option) => option.value === category)?.title ?? 'Promotion'
       const schedule = startsAt && endsAt ? `${startsAt} – ${endsAt}` : 'Schedule incomplete'
       return {
         title: title || internalName || 'Untitled promotion',
-        subtitle: `${categoryTitle} · ${schedule}`,
+        subtitle: `${isVisible === false ? 'Hidden · ' : ''}${categoryTitle} · ${schedule}`,
         media,
       }
     },

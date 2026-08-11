@@ -22,6 +22,14 @@ export const structure: StructureResolver = (S) =>
             .items([
               S.documentTypeListItem('promotion').title('All Promotions'),
               S.listItem()
+                .title('Hidden')
+                .child(
+                  S.documentList()
+                    .title('Hidden Promotions')
+                    .schemaType('promotion')
+                    .filter('_type == "promotion" && isVisible == false'),
+                ),
+              S.listItem()
                 .title('Active')
                 .child(
                   S.documentList()
