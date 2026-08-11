@@ -14,47 +14,64 @@ export const structure: StructureResolver = (S) =>
         .icon(DocumentTextIcon)
         .child(S.document().schemaType('offersPage').documentId('offersPage').title('Offers Page')),
       S.listItem()
-        .title('Promotions')
+        .title('Promo Groups')
         .icon(TagIcon)
         .child(
           S.list()
-            .title('Promotions')
+            .title('Promo Groups')
             .items([
-              S.documentTypeListItem('promotion').title('All Promotions'),
+              S.documentTypeListItem('promotionGroup').title('All Promo Groups'),
               S.listItem()
                 .title('Hidden')
                 .child(
                   S.documentList()
-                    .title('Hidden Promotions')
-                    .schemaType('promotion')
-                    .filter('_type == "promotion" && isVisible == false'),
+                    .title('Hidden Promo Groups')
+                    .schemaType('promotionGroup')
+                    .filter('_type == "promotionGroup" && isVisible == false'),
                 ),
               S.listItem()
                 .title('Active')
                 .child(
                   S.documentList()
-                    .title('Active Promotions')
-                    .schemaType('promotion')
-                    .filter('_type == "promotion" && startsAt <= now() && endsAt > now()'),
+                    .title('Active Promo Groups')
+                    .schemaType('promotionGroup')
+                    .filter(
+                      '_type == "promotionGroup" && coalesce(isVisible, true) == true && startsAt <= now() && endsAt > now()',
+                    ),
                 ),
               S.listItem()
                 .title('Upcoming')
                 .child(
                   S.documentList()
-                    .title('Upcoming Promotions')
-                    .schemaType('promotion')
-                    .filter('_type == "promotion" && startsAt > now()'),
+                    .title('Upcoming Promo Groups')
+                    .schemaType('promotionGroup')
+                    .filter(
+                      '_type == "promotionGroup" && coalesce(isVisible, true) == true && startsAt > now()',
+                    ),
                 ),
               S.listItem()
                 .title('Expired')
                 .child(
                   S.documentList()
-                    .title('Expired Promotions')
-                    .schemaType('promotion')
-                    .filter('_type == "promotion" && endsAt <= now()'),
+                    .title('Expired Promo Groups')
+                    .schemaType('promotionGroup')
+                    .filter('_type == "promotionGroup" && endsAt <= now()'),
+                ),
+              S.listItem()
+                .title('Homepage')
+                .child(
+                  S.documentList()
+                    .title('Homepage Promo Groups')
+                    .schemaType('promotionGroup')
+                    .filter('_type == "promotionGroup" && featureOnHomepage == true')
+                    .defaultOrdering([{field: 'homepageOrder', direction: 'asc'}]),
                 ),
             ]),
         ),
+      S.listItem()
+        .title('Legacy Promotions')
+        .icon(TagIcon)
+        .child(S.documentTypeList('promotion').title('Legacy Promotions')),
       S.listItem()
         .title('Events & Milestones Page')
         .icon(DocumentTextIcon)
@@ -108,6 +125,7 @@ export const structure: StructureResolver = (S) =>
         (listItem) =>
           !SINGLETON_TYPES.has(listItem.getId() as string) &&
           listItem.getId() !== 'promotion' &&
+          listItem.getId() !== 'promotionGroup' &&
           listItem.getId() !== 'eventMilestone',
       ),
     ])

@@ -3,6 +3,8 @@ import {offersPageType} from './offersPage'
 import {promotionType} from './promotion'
 import {eventMilestoneType} from './eventMilestone'
 import {eventsMilestonesPageType} from './eventsMilestonesPage'
+import {promotionGroupType} from './promotionGroup'
+import {promotionPackageType} from './promotionPackage'
 import {
   promotionCallToActionSectionType,
   promotionNoticeSectionType,
@@ -18,6 +20,8 @@ export const schemaTypes = [
   promotionNoticeSectionType,
   promotionCallToActionSectionType,
   promotionPageSectionsType,
+  promotionPackageType,
+  promotionGroupType,
   promotionType,
   eventMilestoneType,
   eventsMilestonesPageType,
