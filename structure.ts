@@ -87,7 +87,11 @@ export const structure: StructureResolver = (S) =>
                   S.documentList()
                     .title('Featured')
                     .schemaType('eventMilestone')
-                    .filter('_type == "eventMilestone" && featured == true'),
+                    .filter('_type == "eventMilestone" && featured == true')
+                    .defaultOrdering([
+                      {field: 'homepageOrder', direction: 'asc'},
+                      {field: 'startDate', direction: 'desc'},
+                    ]),
                 ),
             ]),
         ),
