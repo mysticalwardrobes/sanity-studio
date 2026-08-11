@@ -38,6 +38,7 @@ export const promotionType = defineType({
   },
   groups: [
     {name: 'content', title: 'Content', default: true},
+    {name: 'page', title: 'Promo Page'},
     {name: 'benefit', title: 'Benefit'},
     {name: 'eligibility', title: 'Eligibility'},
     {name: 'schedule', title: 'Schedule'},
@@ -85,8 +86,17 @@ export const promotionType = defineType({
       title: 'Offer details',
       type: 'array',
       group: 'content',
+      description:
+        'Fallback content for the dedicated promo page. It is shown only when no Promo Page sections have been added.',
       of: [defineArrayMember({type: 'block'})],
-      validation: (rule) => rule.required().min(1),
+      validation: (rule) =>
+        rule.custom((value, context) => {
+          const sections = context.document?.pageSections
+          if (Array.isArray(sections) && sections.length > 0) return true
+          return Array.isArray(value) && value.length > 0
+            ? true
+            : 'Add offer details or at least one Promo Page section'
+        }),
     }),
     defineField({
       name: 'campaignImage',
@@ -103,6 +113,14 @@ export const promotionType = defineType({
           validation: (rule) => rule.required(),
         }),
       ],
+    }),
+    defineField({
+      name: 'pageSections',
+      title: 'Page sections',
+      type: 'promotionPageSections',
+      group: 'page',
+      description:
+        'Build the body of this promotion page. Drag sections to change their order. If empty, Offer details is used instead.',
     }),
     defineField({
       name: 'benefitType',
