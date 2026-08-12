@@ -60,7 +60,7 @@ export const promotionPackageType = defineType({
       title: 'Package banner',
       type: 'image',
       group: 'content',
-      description: 'Shown above this package’s details. Use a wide 16:7 image.',
+      description: 'Shown above this package’s details. Use a 4:3 image.',
       options: {hotspot: true},
       fields: [
         defineField({
