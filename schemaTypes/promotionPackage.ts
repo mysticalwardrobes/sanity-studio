@@ -56,6 +56,23 @@ export const promotionPackageType = defineType({
       validation: (rule) => rule.required().max(220),
     }),
     defineField({
+      name: 'banner',
+      title: 'Package banner',
+      type: 'image',
+      group: 'content',
+      description: 'Shown above this package’s details. Use a wide 16:7 image.',
+      options: {hotspot: true},
+      fields: [
+        defineField({
+          name: 'alt',
+          title: 'Alternative text',
+          type: 'string',
+          validation: (rule) => rule.required(),
+        }),
+      ],
+      validation: (rule) => rule.required(),
+    }),
+    defineField({
       name: 'details',
       title: 'Package details',
       type: 'array',
@@ -245,8 +262,9 @@ export const promotionPackageType = defineType({
       benefitType: 'benefitType',
       discountValue: 'discountValue',
       isAvailable: 'isAvailable',
+      media: 'banner',
     },
-    prepare({title, benefitType, discountValue, isAvailable}) {
+    prepare({title, benefitType, discountValue, isAvailable, media}) {
       const benefit =
         benefitType === 'percentage'
           ? `${discountValue ?? 0}% off`
@@ -256,7 +274,7 @@ export const promotionPackageType = defineType({
       return {
         title: title || 'Untitled package',
         subtitle: `${isAvailable === false ? 'Hidden · ' : ''}${benefit}`,
-        media: TagIcon,
+        media: media || TagIcon,
       }
     },
   },
