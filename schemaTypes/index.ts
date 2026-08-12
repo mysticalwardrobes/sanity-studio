@@ -5,6 +5,7 @@ import {eventMilestoneType} from './eventMilestone'
 import {eventsMilestonesPageType} from './eventsMilestonesPage'
 import {promotionGroupType} from './promotionGroup'
 import {promotionPackageType} from './promotionPackage'
+import {gownDiscountCampaignType} from './gownDiscountCampaign'
 import {
   promotionCallToActionSectionType,
   promotionNoticeSectionType,
@@ -15,6 +16,7 @@ import {
 
 export const schemaTypes = [
   offersPageType,
+  gownDiscountCampaignType,
   promotionPackageGroupSectionType,
   promotionRichTextSectionType,
   promotionNoticeSectionType,

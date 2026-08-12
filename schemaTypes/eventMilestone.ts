@@ -155,7 +155,8 @@ export const eventMilestoneType = defineType({
       title: 'Show in homepage gallery',
       type: 'boolean',
       group: 'content',
-      description: 'Include this story in the Events & Milestones gallery on the homepage.',
+      description:
+        'Prioritize this story in the homepage gallery. If no stories are selected, the latest published stories are shown automatically.',
     }),
     defineField({
       name: 'homepageOrder',

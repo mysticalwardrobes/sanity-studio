@@ -3,7 +3,7 @@ import {TagIcon} from '@sanity/icons/Tag'
 import {CalendarIcon} from '@sanity/icons/Calendar'
 import type {StructureResolver} from 'sanity/structure'
 
-const SINGLETON_TYPES = new Set(['offersPage', 'eventsMilestonesPage'])
+const SINGLETON_TYPES = new Set(['offersPage', 'gownDiscountCampaign', 'eventsMilestonesPage'])
 
 export const structure: StructureResolver = (S) =>
   S.list()
@@ -13,6 +13,15 @@ export const structure: StructureResolver = (S) =>
         .title('Offers Page')
         .icon(DocumentTextIcon)
         .child(S.document().schemaType('offersPage').documentId('offersPage').title('Offers Page')),
+      S.listItem()
+        .title('Gown Discount Campaign')
+        .icon(TagIcon)
+        .child(
+          S.document()
+            .schemaType('gownDiscountCampaign')
+            .documentId('gownDiscountCampaign')
+            .title('Gown Discount Campaign'),
+        ),
       S.listItem()
         .title('Promo Groups')
         .icon(TagIcon)

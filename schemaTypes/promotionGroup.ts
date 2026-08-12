@@ -2,6 +2,10 @@ import {TagsIcon} from '@sanity/icons/Tags'
 import {defineArrayMember, defineField, defineType} from 'sanity'
 import {promotionCategoryOptions} from './promotion'
 
+const promotionGroupCategoryOptions = promotionCategoryOptions.filter(
+  (option) => option.value !== 'limitedTimeDiscount',
+)
+
 type PackageValue = {
   slug?: {current?: string}
   isAvailable?: boolean
@@ -51,7 +55,8 @@ export const promotionGroupType = defineType({
       name: 'category',
       type: 'string',
       group: 'content',
-      options: {list: [...promotionCategoryOptions], layout: 'radio'},
+      description: 'Limited-Time Discounts are managed by the Gown Discount Campaign singleton.',
+      options: {list: [...promotionGroupCategoryOptions], layout: 'radio'},
       validation: (rule) => rule.required(),
     }),
     defineField({
