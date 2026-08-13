@@ -10,8 +10,6 @@ export const gownDiscountCampaignType = defineType({
     eyebrow: 'Limited-Time Discounts',
     title: 'Limited-Time Gown Discounts',
     summary: 'Explore wardrobes with special rental savings already applied to selected rates.',
-    featureOnHomepage: false,
-    homepageOrder: 1,
     seoTitle: 'Limited-Time Gown Discounts | Mystical Wardrobes',
     seoDescription:
       'Browse Mystical Wardrobes gowns with limited-time discounts on selected rental rates.',
@@ -74,23 +72,27 @@ export const gownDiscountCampaignType = defineType({
     }),
     defineField({
       name: 'featureOnHomepage',
-      title: 'Feature on homepage',
+      title: 'Feature on homepage (Deprecated)',
       type: 'boolean',
       group: 'presentation',
-      description: 'The campaign appears only while at least one gown has a valid rate discount.',
-      initialValue: false,
+      deprecated: {
+        reason: 'The discounted-gown preview now appears automatically while valid discounts exist.',
+      },
+      readOnly: true,
+      hidden: ({value}) => value === undefined,
+      initialValue: undefined,
     }),
     defineField({
       name: 'homepageOrder',
-      title: 'Homepage order',
+      title: 'Homepage order (Deprecated)',
       type: 'number',
       group: 'presentation',
-      hidden: ({document}) => !document?.featureOnHomepage,
-      validation: (rule) =>
-        rule.integer().min(1).custom((value, context) => {
-          if (!context.document?.featureOnHomepage) return true
-          return typeof value === 'number' ? true : 'Set the homepage order'
-        }),
+      deprecated: {
+        reason: 'The recurring discount is now displayed below the promotion carousel.',
+      },
+      readOnly: true,
+      hidden: ({value}) => value === undefined,
+      initialValue: undefined,
     }),
     defineField({
       name: 'seoTitle',
