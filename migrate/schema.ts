@@ -1401,6 +1401,14 @@ export const gownTransformationType = defineType({
       description: "A description detailing the overall redesign journey for this gown",
     }),
     defineField({
+      name: "currentVersionDescription",
+      type: "text",
+      title: "Current Version Description",
+      description:
+        "The summary displayed for the latest active catalogue version in the Design Evolution story",
+      rows: 4,
+    }),
+    defineField({
       name: "versions",
       type: "array",
       title: "Past Versions",
