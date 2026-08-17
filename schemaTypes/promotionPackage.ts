@@ -138,8 +138,8 @@ export const promotionPackageType = defineType({
       title: 'Package terms and conditions',
       type: 'array',
       group: 'benefit',
+      description: 'Optional package-specific terms shown in addition to the general promotions terms.',
       of: [defineArrayMember({type: 'block'})],
-      validation: (rule) => rule.required().min(1),
     }),
     defineField({
       name: 'eligibilityMode',
