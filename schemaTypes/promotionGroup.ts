@@ -11,6 +11,11 @@ type PackageValue = {
   isAvailable?: boolean
 }
 
+type PromotionValue = {
+  slug?: {current?: string}
+  packages?: PackageValue[]
+}
+
 export const promotionGroupType = defineType({
   name: 'promotionGroup',
   title: 'Promo Group',
@@ -24,7 +29,7 @@ export const promotionGroupType = defineType({
   },
   groups: [
     {name: 'content', title: 'Campaign', default: true},
-    {name: 'packages', title: 'Packages'},
+    {name: 'promotions', title: 'Promotions'},
     {name: 'schedule', title: 'Schedule'},
     {name: 'presentation', title: 'Presentation'},
   ],
@@ -84,32 +89,43 @@ export const promotionGroupType = defineType({
       ],
     }),
     defineField({
-      name: 'packages',
-      title: 'Promotion packages',
+      name: 'promotions',
+      title: 'Promotions',
       type: 'array',
-      group: 'packages',
-      description: 'Create packages here and drag them into the order customers should see.',
-      of: [defineArrayMember({type: 'promotionPackage'})],
+      group: 'promotions',
+      description: 'Create promotions here and drag them into the order customers should see.',
+      of: [defineArrayMember({type: 'promotionOffer'})],
       validation: (rule) =>
         rule
           .required()
           .min(1)
           .custom((value) => {
-            const packages = (value ?? []) as PackageValue[]
-            const slugs = packages
+            const promotions = (value ?? []) as PromotionValue[]
+            const slugs = promotions
               .map((item) => item.slug?.current?.trim().toLowerCase())
               .filter((slug): slug is string => Boolean(slug))
             return new Set(slugs).size === slugs.length
               ? true
-              : 'Every package in this group must have a unique slug'
+              : 'Every promotion in this group must have a unique slug'
           }),
+    }),
+    defineField({
+      name: 'packages',
+      title: 'Promotion packages (Deprecated)',
+      type: 'array',
+      group: 'promotions',
+      of: [defineArrayMember({type: 'promotionPackage'})],
+      deprecated: {reason: 'Packages now belong to promotions inside this promo group.'},
+      readOnly: true,
+      hidden: ({value}) => value === undefined,
+      initialValue: undefined,
     }),
     defineField({
       name: 'startsAt',
       title: 'Starts at',
       type: 'datetime',
       group: 'schedule',
-      description: 'All packages in this group share this schedule.',
+      description: 'All promotions and packages in this group share this schedule.',
       validation: (rule) => rule.required(),
     }),
     defineField({
@@ -138,10 +154,12 @@ export const promotionGroupType = defineType({
         rule
           .custom((value, context) => {
             if (value === false) return true
-            const packages = (context.document?.packages ?? []) as PackageValue[]
-            return packages.some((item) => item.isAvailable !== false)
+            const promotions = (context.document?.promotions ?? []) as PromotionValue[]
+            return promotions.some((promotion) =>
+              promotion.packages?.some((item) => item.isAvailable !== false),
+            )
               ? true
-              : 'A visible group should contain at least one available package'
+              : 'A visible group should contain at least one promotion with an available package'
           })
           .warning(),
     }),
@@ -182,19 +200,23 @@ export const promotionGroupType = defineType({
       startsAt: 'startsAt',
       endsAt: 'endsAt',
       isVisible: 'isVisible',
-      packages: 'packages',
+      promotions: 'promotions',
       media: 'campaignImage',
     },
-    prepare({title, internalName, category, startsAt, endsAt, isVisible, packages, media}) {
+    prepare({title, internalName, category, startsAt, endsAt, isVisible, promotions, media}) {
       const categoryTitle =
         promotionCategoryOptions.find((option) => option.value === category)?.title ?? 'Promo Group'
-      const packageCount = Array.isArray(packages)
-        ? packages.filter((item: PackageValue) => item.isAvailable !== false).length
-        : 0
+      const promotionValues = Array.isArray(promotions) ? (promotions as PromotionValue[]) : []
+      const promotionCount = promotionValues.length
+      const packageCount = promotionValues.reduce(
+        (count, promotion) =>
+          count + (promotion.packages ?? []).filter((item) => item.isAvailable !== false).length,
+        0,
+      )
       const schedule = startsAt && endsAt ? `${startsAt} – ${endsAt}` : 'Schedule incomplete'
       return {
         title: title || internalName || 'Untitled promo group',
-        subtitle: `${isVisible === false ? 'Hidden · ' : ''}${categoryTitle} · ${packageCount} package${packageCount === 1 ? '' : 's'} · ${schedule}`,
+        subtitle: `${isVisible === false ? 'Hidden · ' : ''}${categoryTitle} · ${promotionCount} promotion${promotionCount === 1 ? '' : 's'} · ${packageCount} package${packageCount === 1 ? '' : 's'} · ${schedule}`,
         media,
       }
     },
