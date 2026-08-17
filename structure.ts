@@ -3,12 +3,26 @@ import {TagIcon} from '@sanity/icons/Tag'
 import {CalendarIcon} from '@sanity/icons/Calendar'
 import type {StructureResolver} from 'sanity/structure'
 
-const SINGLETON_TYPES = new Set(['offersPage', 'gownDiscountCampaign', 'eventsMilestonesPage'])
+const SINGLETON_TYPES = new Set([
+  'offersPage',
+  'gownDiscountCampaign',
+  'eventsMilestonesPage',
+  'collectionPageCards',
+])
 
 export const structure: StructureResolver = (S) =>
   S.list()
     .title('Website Content')
     .items([
+      S.listItem()
+        .title('Collection Page Cards')
+        .icon(DocumentTextIcon)
+        .child(
+          S.document()
+            .schemaType('collectionPageCards')
+            .documentId('collectionPageCards')
+            .title('Collection Page Cards'),
+        ),
       S.listItem()
         .title('Offers Page')
         .icon(DocumentTextIcon)

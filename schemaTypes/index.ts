@@ -13,8 +13,11 @@ import {
   promotionPageSectionsType,
   promotionRichTextSectionType,
 } from './promotionPageSections'
+import {collectionCardSelectionType, collectionPageCardsType} from './collectionPageCards'
 
 export const schemaTypes = [
+  collectionCardSelectionType,
+  collectionPageCardsType,
   offersPageType,
   gownDiscountCampaignType,
   promotionPackageGroupSectionType,
