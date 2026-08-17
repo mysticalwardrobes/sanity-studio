@@ -1,6 +1,10 @@
 import {TagIcon} from '@sanity/icons/Tag'
 import {defineArrayMember, defineField, defineType} from 'sanity'
-import {asSanityList, gownV2EligibilityOptions} from './gownV2Eligibility'
+import {
+  asSanityList,
+  gownV2EligibilityOptions,
+  rentalTierEligibilityOptions,
+} from './gownV2Eligibility'
 
 const rentalVariantOptions = [
   {title: 'Standard rental', value: 'standard'},
@@ -182,6 +186,16 @@ export const promotionPackageType = defineType({
             validation: (rule) => rule.unique(),
           }),
         ),
+        defineField({
+          name: 'rentalTiers',
+          title: 'Rental Tiers',
+          type: 'array',
+          description:
+            'A gown’s tier is based on its Metro Manila standard rate, falling back to its pixie rate when needed.',
+          of: [defineArrayMember({type: 'string'})],
+          options: {list: [...rentalTierEligibilityOptions]},
+          validation: (rule) => rule.unique(),
+        }),
         defineField({
           name: 'corsetCounts',
           title: 'Corset Count',

@@ -10,5 +10,18 @@ export const gownV2EligibilityOptions = {
   petticoats: ['Meium Petticoat', 'No Hoops Petticoat', 'No Petticoat', 'Pixie Petticoat', 'Premium Petticoat', 'Slim Petticoat'],
 } as const
 
+export const rentalTierEligibilityOptions = [
+  {title: 'Classic', value: 'classic'},
+  {title: 'Essential', value: 'essential'},
+  {title: 'Premier', value: 'premier'},
+  {title: 'Royal', value: 'royal'},
+  {title: 'Noble', value: 'noble'},
+  {title: 'Prestige', value: 'prestige'},
+  {title: 'Signature', value: 'signature'},
+  {title: 'Elite', value: 'elite'},
+  {title: 'Legendary', value: 'legendary'},
+  {title: 'Legacy', value: 'legacy'},
+] as const
+
 export const asSanityList = (values: readonly string[]) =>
   values.map((value) => ({title: value, value}))
