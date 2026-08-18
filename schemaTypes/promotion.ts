@@ -120,9 +120,9 @@ export const promotionType = defineType({
       type: 'promotionPageSections',
       group: 'page',
       description:
-        'Legacy page-builder data. New promotions are managed as packages inside Promo Groups.',
+        'Legacy page-builder data. New promotions use packages directly inside Promotion documents.',
       deprecated: {
-        reason: 'Promo pages now use Promo Groups with embedded packages.',
+        reason: 'Promotion pages now use Promotion documents with embedded packages.',
       },
       readOnly: true,
       hidden: ({value}) => value === undefined,

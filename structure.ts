@@ -37,18 +37,18 @@ export const structure: StructureResolver = (S) =>
             .title('Gown Discount Campaign'),
         ),
       S.listItem()
-        .title('Promo Groups')
+        .title('Promotions')
         .icon(TagIcon)
         .child(
           S.list()
-            .title('Promo Groups')
+            .title('Promotions')
             .items([
-              S.documentTypeListItem('promotionGroup').title('All Promo Groups'),
+              S.documentTypeListItem('promotionGroup').title('All Promotions'),
               S.listItem()
                 .title('Hidden')
                 .child(
                   S.documentList()
-                    .title('Hidden Promo Groups')
+                    .title('Hidden Promotions')
                     .schemaType('promotionGroup')
                     .filter('_type == "promotionGroup" && isVisible == false'),
                 ),
@@ -56,7 +56,7 @@ export const structure: StructureResolver = (S) =>
                 .title('Active')
                 .child(
                   S.documentList()
-                    .title('Active Promo Groups')
+                    .title('Active Promotions')
                     .schemaType('promotionGroup')
                     .filter(
                       '_type == "promotionGroup" && coalesce(isVisible, true) == true && startsAt <= now() && endsAt > now()',
@@ -66,7 +66,7 @@ export const structure: StructureResolver = (S) =>
                 .title('Upcoming')
                 .child(
                   S.documentList()
-                    .title('Upcoming Promo Groups')
+                    .title('Upcoming Promotions')
                     .schemaType('promotionGroup')
                     .filter(
                       '_type == "promotionGroup" && coalesce(isVisible, true) == true && startsAt > now()',
@@ -76,7 +76,7 @@ export const structure: StructureResolver = (S) =>
                 .title('Expired')
                 .child(
                   S.documentList()
-                    .title('Expired Promo Groups')
+                    .title('Expired Promotions')
                     .schemaType('promotionGroup')
                     .filter('_type == "promotionGroup" && endsAt <= now()'),
                 ),
@@ -84,7 +84,7 @@ export const structure: StructureResolver = (S) =>
                 .title('Homepage')
                 .child(
                   S.documentList()
-                    .title('Homepage Promo Groups')
+                    .title('Homepage Promotions')
                     .schemaType('promotionGroup')
                     .filter('_type == "promotionGroup" && featureOnHomepage == true')
                     .defaultOrdering([{field: 'homepageOrder', direction: 'asc'}]),

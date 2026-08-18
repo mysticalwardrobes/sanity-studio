@@ -11,14 +11,9 @@ type PackageValue = {
   isAvailable?: boolean
 }
 
-type PromotionValue = {
-  slug?: {current?: string}
-  packages?: PackageValue[]
-}
-
 export const promotionGroupType = defineType({
   name: 'promotionGroup',
-  title: 'Promo Group',
+  title: 'Promotion',
   type: 'document',
   icon: TagsIcon,
   initialValue: {
@@ -28,8 +23,8 @@ export const promotionGroupType = defineType({
     featureOnHomepage: false,
   },
   groups: [
-    {name: 'content', title: 'Campaign', default: true},
-    {name: 'promotions', title: 'Promotions'},
+    {name: 'content', title: 'Promotion', default: true},
+    {name: 'packages', title: 'Packages'},
     {name: 'schedule', title: 'Schedule'},
     {name: 'presentation', title: 'Presentation'},
   ],
@@ -39,7 +34,7 @@ export const promotionGroupType = defineType({
       title: 'Internal name',
       type: 'string',
       group: 'content',
-      description: 'Used by editors to distinguish campaigns.',
+      description: 'Used by editors to distinguish promotions.',
       validation: (rule) => rule.required(),
     }),
     defineField({
@@ -69,12 +64,12 @@ export const promotionGroupType = defineType({
       type: 'text',
       rows: 4,
       group: 'content',
-      description: 'Used on Home, Offers, and the group hero.',
+      description: 'Used on Home, Offers, and the promotion hero.',
       validation: (rule) => rule.required().max(320),
     }),
     defineField({
       name: 'campaignImage',
-      title: 'Campaign image',
+      title: 'Promotion image',
       type: 'image',
       group: 'content',
       description: 'Optional. Use a 4:3 image; image-free groups use a branded text layout.',
@@ -89,33 +84,33 @@ export const promotionGroupType = defineType({
       ],
     }),
     defineField({
-      name: 'promotions',
-      title: 'Promotions',
+      name: 'packages',
+      title: 'Promotion packages',
       type: 'array',
-      group: 'promotions',
-      description: 'Create promotions here and drag them into the order customers should see.',
-      of: [defineArrayMember({type: 'promotionOffer'})],
+      group: 'packages',
+      description: 'Create packages here and drag them into the order customers should see.',
+      of: [defineArrayMember({type: 'promotionPackage'})],
       validation: (rule) =>
         rule
           .required()
           .min(1)
           .custom((value) => {
-            const promotions = (value ?? []) as PromotionValue[]
-            const slugs = promotions
+            const packages = (value ?? []) as PackageValue[]
+            const slugs = packages
               .map((item) => item.slug?.current?.trim().toLowerCase())
               .filter((slug): slug is string => Boolean(slug))
             return new Set(slugs).size === slugs.length
               ? true
-              : 'Every promotion in this group must have a unique slug'
+              : 'Every package in this promotion must have a unique slug'
           }),
     }),
     defineField({
-      name: 'packages',
-      title: 'Promotion packages (Deprecated)',
+      name: 'promotions',
+      title: 'Nested promotions (Deprecated)',
       type: 'array',
-      group: 'promotions',
-      of: [defineArrayMember({type: 'promotionPackage'})],
-      deprecated: {reason: 'Packages now belong to promotions inside this promo group.'},
+      group: 'packages',
+      of: [defineArrayMember({type: 'promotionOffer'})],
+      deprecated: {reason: 'Packages now belong directly to individual promotion documents.'},
       readOnly: true,
       hidden: ({value}) => value === undefined,
       initialValue: undefined,
@@ -125,7 +120,7 @@ export const promotionGroupType = defineType({
       title: 'Starts at',
       type: 'datetime',
       group: 'schedule',
-      description: 'All promotions and packages in this group share this schedule.',
+      description: 'All packages in this promotion share this schedule.',
       validation: (rule) => rule.required(),
     }),
     defineField({
@@ -148,18 +143,16 @@ export const promotionGroupType = defineType({
       type: 'boolean',
       group: 'presentation',
       description:
-        'Turn this off to hide the group everywhere and disable all of its package rules.',
+        'Turn this off to hide the promotion everywhere and disable all of its package rules.',
       initialValue: true,
       validation: (rule) =>
         rule
           .custom((value, context) => {
             if (value === false) return true
-            const promotions = (context.document?.promotions ?? []) as PromotionValue[]
-            return promotions.some((promotion) =>
-              promotion.packages?.some((item) => item.isAvailable !== false),
-            )
+            const packages = (context.document?.packages ?? []) as PackageValue[]
+            return packages.some((item) => item.isAvailable !== false)
               ? true
-              : 'A visible group should contain at least one promotion with an available package'
+              : 'A visible promotion should contain at least one available package'
           })
           .warning(),
     }),
@@ -200,23 +193,19 @@ export const promotionGroupType = defineType({
       startsAt: 'startsAt',
       endsAt: 'endsAt',
       isVisible: 'isVisible',
-      promotions: 'promotions',
+      packages: 'packages',
       media: 'campaignImage',
     },
-    prepare({title, internalName, category, startsAt, endsAt, isVisible, promotions, media}) {
+    prepare({title, internalName, category, startsAt, endsAt, isVisible, packages, media}) {
       const categoryTitle =
-        promotionCategoryOptions.find((option) => option.value === category)?.title ?? 'Promo Group'
-      const promotionValues = Array.isArray(promotions) ? (promotions as PromotionValue[]) : []
-      const promotionCount = promotionValues.length
-      const packageCount = promotionValues.reduce(
-        (count, promotion) =>
-          count + (promotion.packages ?? []).filter((item) => item.isAvailable !== false).length,
-        0,
-      )
+        promotionCategoryOptions.find((option) => option.value === category)?.title ?? 'Promotion'
+      const packageCount = Array.isArray(packages)
+        ? packages.filter((item: PackageValue) => item.isAvailable !== false).length
+        : 0
       const schedule = startsAt && endsAt ? `${startsAt} – ${endsAt}` : 'Schedule incomplete'
       return {
-        title: title || internalName || 'Untitled promo group',
-        subtitle: `${isVisible === false ? 'Hidden · ' : ''}${categoryTitle} · ${promotionCount} promotion${promotionCount === 1 ? '' : 's'} · ${packageCount} package${packageCount === 1 ? '' : 's'} · ${schedule}`,
+        title: title || internalName || 'Untitled promotion',
+        subtitle: `${isVisible === false ? 'Hidden · ' : ''}${categoryTitle} · ${packageCount} package${packageCount === 1 ? '' : 's'} · ${schedule}`,
         media,
       }
     },
