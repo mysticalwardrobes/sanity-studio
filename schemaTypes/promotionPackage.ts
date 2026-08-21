@@ -106,6 +106,8 @@ export const promotionPackageType = defineType({
           ],
         }),
         defineArrayMember({type: 'promotionRentalTierTable'}),
+        defineArrayMember({type: 'promotionGownGallery'}),
+        defineArrayMember({type: 'promotionAddOnGallery'}),
       ],
       validation: (rule) => rule.required().min(1),
     }),

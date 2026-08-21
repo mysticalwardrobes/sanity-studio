@@ -6,6 +6,10 @@ import {eventsMilestonesPageType} from './eventsMilestonesPage'
 import {promotionGroupType} from './promotionGroup'
 import {promotionPackageType} from './promotionPackage'
 import {promotionRentalTierTableType} from './promotionRentalTierTable'
+import {
+  promotionAddOnGalleryType,
+  promotionGownGalleryType,
+} from './promotionProductGalleries'
 import {promotionOfferType} from './promotionOffer'
 import {gownDiscountCampaignType} from './gownDiscountCampaign'
 import {
@@ -28,6 +32,8 @@ export const schemaTypes = [
   promotionCallToActionSectionType,
   promotionPageSectionsType,
   promotionRentalTierTableType,
+  promotionGownGalleryType,
+  promotionAddOnGalleryType,
   promotionPackageType,
   promotionOfferType,
   promotionGroupType,
