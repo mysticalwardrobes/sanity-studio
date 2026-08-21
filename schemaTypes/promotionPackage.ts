@@ -80,8 +80,32 @@ export const promotionPackageType = defineType({
       title: 'Package details',
       type: 'array',
       group: 'content',
-      description: 'Describe inclusions, how to avail the package, and who it is best for.',
-      of: [defineArrayMember({type: 'block'})],
+      description:
+        'Describe inclusions, how to avail the package, and who it is best for. Add explanation images between text sections as needed.',
+      of: [
+        defineArrayMember({type: 'block'}),
+        defineArrayMember({
+          type: 'image',
+          title: 'Explanation image',
+          options: {hotspot: true},
+          fields: [
+            defineField({
+              name: 'alt',
+              title: 'Alternative text',
+              type: 'string',
+              description: 'Describe the image and any important text shown inside it.',
+              validation: (rule) => rule.required(),
+            }),
+            defineField({
+              name: 'caption',
+              title: 'Caption',
+              type: 'string',
+              description: 'Optional supporting text shown below the image.',
+              validation: (rule) => rule.max(180),
+            }),
+          ],
+        }),
+      ],
       validation: (rule) => rule.required().min(1),
     }),
     defineField({
