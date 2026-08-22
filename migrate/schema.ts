@@ -1190,6 +1190,7 @@ export const addOnsType = defineType({
               "gloves",
               "mask",
               "necklace",
+              "neck collar",
               "umbrella",
               "train",
               "wings"
@@ -1206,6 +1207,7 @@ export const addOnsType = defineType({
           "gloves",
           "mask",
           "necklace",
+          "neck collar",
           "umbrella",
           "train",
           "wings"
