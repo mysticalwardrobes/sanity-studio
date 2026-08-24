@@ -32,3 +32,5 @@
 Gown Photos/
 "Gown Photos"/
 
+# Local Git worktrees
+/.worktrees/
