@@ -57,7 +57,7 @@ export const promotionPackageType = defineType({
       type: 'text',
       rows: 3,
       group: 'content',
-      validation: (rule) => rule.required().max(220),
+      validation: (rule) => rule.required().max(600),
     }),
     defineField({
       name: 'banner',
