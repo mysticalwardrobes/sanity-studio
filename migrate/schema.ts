@@ -635,9 +635,15 @@ export const gownTempType = defineType({
     }),
     defineField({
       name: "releaseDate",
-      type: "date",
-      title: "Release Date",
-      description: "The date this gown was released to customers",
+      type: "string",
+      title: "Release Month",
+      description: "The month this gown was released to customers, in YYYY-MM format",
+      validation: (Rule) =>
+        Rule.custom((value) =>
+          !value || /^\d{4}-(0[1-9]|1[0-2])$/.test(value)
+            ? true
+            : "Use YYYY-MM format, for example 2026-08",
+        ),
     }),
     defineField({
       name: "upcomingDesign",
