@@ -634,6 +634,12 @@ export const gownTempType = defineType({
       validation: (Rule) => Rule.required(),
     }),
     defineField({
+      name: "releaseDate",
+      type: "date",
+      title: "Release Date",
+      description: "The date this gown was released to customers",
+    }),
+    defineField({
       name: "upcomingDesign",
       type: "string",
       title: "Upcoming Design & Evolution",
