@@ -1403,7 +1403,7 @@ export const gownTransformationType = defineType({
     defineField({
       name: "currentGown",
       type: "reference",
-      to: [{ type: "gown" }],
+      to: [{ type: "gown_temp" }],
       title: "Current Gown (Latest Version)",
       description: "Link to the latest version of the gown in the catalogue",
       validation: (Rule) => Rule.required(),
