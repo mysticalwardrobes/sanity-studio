@@ -1,5 +1,4 @@
 import type {SchemaTypeDefinition} from 'sanity'
-import {addOnsType} from './addOns'
 import {offersPageType} from './offersPage'
 import {promotionType} from './promotion'
 import {eventMilestoneType} from './eventMilestone'
@@ -23,7 +22,6 @@ import {
 import {collectionCardSelectionType, collectionPageCardsType} from './collectionPageCards'
 
 export const schemaTypes = [
-  addOnsType,
   collectionCardSelectionType,
   collectionPageCardsType,
   offersPageType,
