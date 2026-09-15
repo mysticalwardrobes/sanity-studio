@@ -32,6 +32,7 @@ const addOnTypeOptions = [
   'hood',
   'petticoat',
   'crown',
+  'headpiece',
   'fan',
   'gloves',
   'mask',

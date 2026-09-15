@@ -1409,6 +1409,13 @@ export const gownTransformationType = defineType({
       validation: (Rule) => Rule.required(),
     }),
     defineField({
+      name: "thumbnailImageNumber",
+      type: "number",
+      title: "Thumbnail Image Number",
+      description: "Optional 1-based image number used for the Design Evolution card thumbnail",
+      validation: (Rule) => Rule.integer().min(1),
+    }),
+    defineField({
       name: "overallDescription",
       type: "text",
       title: "Overall Transformation Description",
