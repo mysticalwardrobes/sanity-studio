@@ -28,11 +28,20 @@ const addOnSortOptions = [
   {title: 'Price: High to Low', value: 'price-high-low'},
 ]
 
+const addOnCategoryLabels: Record<string, string> = {
+  crown: 'Crowns & Headpieces',
+  headpiece: 'Handmade Headpieces',
+  wig: 'Wigs',
+  prop: 'Props',
+}
+
 const addOnTypeOptions = [
   'hood',
   'petticoat',
   'crown',
   'headpiece',
+  'wig',
+  'prop',
   'fan',
   'gloves',
   'mask',
@@ -41,7 +50,7 @@ const addOnTypeOptions = [
   'train',
   'wings',
 ].map((value) => ({
-  title: value.replace(/\b\w/g, (letter) => letter.toUpperCase()),
+  title: addOnCategoryLabels[value] || value.replace(/\b\w/g, (letter) => letter.toUpperCase()),
   value,
 }))
 
