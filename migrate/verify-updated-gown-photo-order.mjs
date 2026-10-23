@@ -37,3 +37,16 @@ for (const [name, folder, field, keyPrefix] of galleries) {
   }
   console.log(`${name} ${field}: ${expectedKeys.length} new photos first, ${actualKeys.length - expectedKeys.length} retained photos after`)
 }
+
+const sleepingBeauty = await client.getDocument('3d91b304-012c-4725-92ff-8fd64056c5b5')
+if (!sleepingBeauty) throw new Error('Missing Sleeping Beauty gown')
+const sleepingLongNames = ['325435.jpg', 'DSC00309.jpg', 'DSC00318.jpg', 'DSC00322 (2).jpg']
+const sleepingLongKeys = sleepingLongNames.map((filename) => createHash('sha1').update(`Sleeping Beauty/Long Version/${filename}`).digest('hex').slice(0, 12))
+const expectedLongKeys = ['sleeping-beauty-long-1', ...sleepingLongKeys, 'sleeping-beauty-long-3', 'sleeping-beauty-long-4']
+const actualLongKeys = (sleepingBeauty.longGownPicture ?? []).map((image) => image._key)
+if (JSON.stringify(actualLongKeys) !== JSON.stringify(expectedLongKeys)) throw new Error('Sleeping Beauty Long photo order mismatch')
+const sleepingPixieNames = ['Cover.jpg', 'DSC03589.jpg', 'DSC03591.jpg', 'DSC03592.jpg', 'DSC03593.jpg']
+const expectedPixieKeys = sleepingPixieNames.map((filename) => createHash('sha1').update(`Sleeping Beauty/Pixie/${filename}`).digest('hex').slice(0, 12))
+const actualPixieKeys = (sleepingBeauty.pixiePicture ?? []).map((image) => image._key)
+if (JSON.stringify(actualPixieKeys) !== JSON.stringify(expectedPixieKeys)) throw new Error('Sleeping Beauty Pixie photo order mismatch')
+console.log('Sleeping Beauty: original Long cover, four new Long photos, two retained Long photos; five new Pixie photos')
