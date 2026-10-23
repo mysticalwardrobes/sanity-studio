@@ -12,6 +12,7 @@ const galleries = [
   ['Eleanor', '', 'pixiePicture', 'Eleanor'],
   ['Elowen', '', 'pixiePicture', 'Elowen/Pixie'],
   ['Ember', '', 'longGownPicture', 'Ember/Long'],
+  ['Gothel', '', 'longGownPicture', 'Gothel/Long'],
   ['Ivory', 'Long Version', 'longGownPicture', 'Ivory/Long Version'],
   ['Ivory', 'Pixie Version', 'pixiePicture', 'Ivory/Pixie Version'],
   ['Lucia', 'Long Version', 'longGownPicture', 'Lucia/Long Version'],
