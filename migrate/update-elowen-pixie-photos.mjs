@@ -7,9 +7,9 @@ const folder = path.resolve(process.cwd(), '..', 'Rush Website Update', 'GOWN RE
 const apply = process.argv.includes('--apply')
 // Recovered from Sanity document history before the October 23 photo edit.
 const retained = [
-  {_type: 'image', _key: 'elowen-pixie-2', asset: {_type: 'reference', _ref: 'image-789b14a7155212b455d2a390111c61df0b4990c0-4000x6000-jpg'}},
+  {_type: 'image', _key: 'elowen-pixie-1', asset: {_type: 'reference', _ref: 'image-1d3daf9b16917f547688152406110e8f9e88634a-3930x5895-jpg'}},
 ]
-const removedKeys = new Set(['elowen-pixie-1', 'elowen-pixie-3', 'elowen-pixie-4', 'elowen-pixie-5', 'elowen-pixie-6'])
+const removedKeys = new Set(['elowen-pixie-2', 'elowen-pixie-3', 'elowen-pixie-4', 'elowen-pixie-5', 'elowen-pixie-6'])
 const filenames = (await readdir(folder)).filter((name) => /\.(jpe?g|png|webp)$/i.test(name))
 filenames.sort((a, b) => Number(!/^cover\./i.test(a)) - Number(!/^cover\./i.test(b)) || a.localeCompare(b))
 const expected = ['Cover.jpg', 'DSC00544.jpg', 'DSC00554.jpg', 'DSC00650.jpg']
@@ -25,7 +25,7 @@ for (const filename of filenames) {
     sha1: createHash('sha1').update(await readFile(file)).digest('hex'),
   })
 }
-console.log(`Prepared ${files.length} new Elowen Pixie photos; retaining original 2; cover: ${filenames[0]}`)
+console.log(`Prepared ${files.length} new Elowen Pixie photos; retaining original 1; cover: ${filenames[0]}`)
 if (!apply) process.exit(0)
 
 const {getCliClient} = await import('sanity/cli')
@@ -57,4 +57,4 @@ if (updated.pixiePicture?.length !== gallery.length ||
     JSON.stringify(updated.filipinianaPicture ?? []) !== originalFilipiniana) {
   throw new Error('Elowen gallery verification failed')
 }
-console.log(`Updated Elowen Pixie gallery with ${pictures.length} new photos plus original 2; Long and Filipiniana unchanged`)
+console.log(`Updated Elowen Pixie gallery with ${pictures.length} new photos plus original 1; Long and Filipiniana unchanged`)
