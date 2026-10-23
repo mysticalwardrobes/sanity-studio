@@ -22,6 +22,7 @@ const galleries = [
   ['Silvermist', '', 'pixiePicture', 'Silvermist/Pixie'],
   ['Starbound', '', 'longGownPicture', 'Starbound/Long'],
   ['Tinkermist', '', 'pixiePicture', 'Tinkermist/Pixie'],
+  ['Tinkerose', '', 'pixiePicture', 'Tinkerose/Pixie'],
 ]
 
 const {getCliClient} = await import('sanity/cli')
