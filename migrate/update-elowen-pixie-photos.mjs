@@ -5,6 +5,12 @@ import path from 'node:path'
 
 const folder = path.resolve(process.cwd(), '..', 'Rush Website Update', 'GOWN RENTALS', 'Photo andor details Updates', 'Elowen')
 const apply = process.argv.includes('--apply')
+// Recovered from Sanity document history before the October 23 photo edit.
+const retained = [
+  {_type: 'image', _key: 'elowen-pixie-1', asset: {_type: 'reference', _ref: 'image-1d3daf9b16917f547688152406110e8f9e88634a-3930x5895-jpg'}},
+  {_type: 'image', _key: 'elowen-pixie-5', asset: {_type: 'reference', _ref: 'image-33af1b5361d504826538a2946daea801e7d5a052-4000x6000-jpg'}},
+]
+const removedKeys = new Set(['elowen-pixie-2', 'elowen-pixie-3', 'elowen-pixie-4', 'elowen-pixie-6'])
 const filenames = (await readdir(folder)).filter((name) => /\.(jpe?g|png|webp)$/i.test(name))
 filenames.sort((a, b) => Number(!/^cover\./i.test(a)) - Number(!/^cover\./i.test(b)) || a.localeCompare(b))
 const expected = ['Cover.jpg', 'DSC00544.jpg', 'DSC00554.jpg', 'DSC00650.jpg']
@@ -20,7 +26,7 @@ for (const filename of filenames) {
     sha1: createHash('sha1').update(await readFile(file)).digest('hex'),
   })
 }
-console.log(`Prepared ${files.length} replacement Elowen Pixie photos; cover: ${filenames[0]}`)
+console.log(`Prepared ${files.length} new Elowen Pixie photos; retaining originals 1 and 5; cover: ${filenames[0]}`)
 if (!apply) process.exit(0)
 
 const {getCliClient} = await import('sanity/cli')
@@ -42,12 +48,14 @@ for (const image of files) {
   }
   pictures.push({_type: 'image', _key: image.key, asset: {_type: 'reference', _ref: assetId}})
 }
-await client.patch(doc._id).set({pixiePicture: pictures}).commit()
+const gallery = [pictures[0], ...retained, ...pictures.slice(1)]
+await client.patch(doc._id).set({pixiePicture: gallery}).commit()
 const updated = await client.getDocument(doc._id)
-if (updated.pixiePicture?.length !== pictures.length ||
-    updated.pixiePicture.some((image, index) => image.asset?._ref !== pictures[index].asset._ref) ||
+if (updated.pixiePicture?.length !== gallery.length ||
+    updated.pixiePicture.some((image, index) => image.asset?._ref !== gallery[index].asset._ref) ||
+    updated.pixiePicture.some((image) => removedKeys.has(image._key)) ||
     JSON.stringify(updated.longGownPicture ?? []) !== originalLong ||
     JSON.stringify(updated.filipinianaPicture ?? []) !== originalFilipiniana) {
   throw new Error('Elowen gallery verification failed')
 }
-console.log(`Replaced Elowen Pixie gallery with ${pictures.length} new photos; Long and Filipiniana unchanged`)
+console.log(`Updated Elowen Pixie gallery with ${pictures.length} new photos plus originals 1 and 5; Long and Filipiniana unchanged`)
