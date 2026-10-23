@@ -47,7 +47,7 @@ for (const image of files) {
   }
   pictures.push({_type: 'image', _key: image.key, asset: {_type: 'reference', _ref: assetId}})
 }
-const gallery = [pictures[0], ...retained, ...pictures.slice(1)]
+const gallery = [...pictures, ...retained]
 await client.patch(doc._id).set({pixiePicture: gallery}).commit()
 const updated = await client.getDocument(doc._id)
 if (updated.pixiePicture?.length !== gallery.length ||

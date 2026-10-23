@@ -51,7 +51,7 @@ for (const photo of photos) {
 }
 const newAssetIds = new Set(added.map((image) => image.asset._ref))
 const kept = existingLong.filter((image) => !removedKeys.has(image._key) && !newAssetIds.has(image.asset?._ref))
-const gallery = [added[0], ...kept, ...added.slice(1)]
+const gallery = [...added, ...kept]
 await client.patch(documentId).set({longGownPicture: gallery}).commit()
 
 const updated = await client.getDocument(documentId)

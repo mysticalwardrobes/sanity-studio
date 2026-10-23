@@ -42,7 +42,7 @@ for (const image of files) {
   }
   pictures.push({_type: 'image', _key: image.key, asset: {_type: 'reference', _ref: assetId}})
 }
-const gallery = [pictures[0], oldFirst, ...pictures.slice(1)]
+const gallery = [...pictures, oldFirst]
 const ids = (images) => (images ?? []).map((image) => `${image._key}:${image.asset?._ref}`)
 if (JSON.stringify(ids(doc.longGownPicture)) !== JSON.stringify(ids(gallery))) {
   await client.patch(doc._id).set({longGownPicture: gallery}).commit()
@@ -52,4 +52,4 @@ if (JSON.stringify(ids(updated.longGownPicture)) !== JSON.stringify(ids(gallery)
     JSON.stringify(updated.filipinianaPicture ?? []) !== beforeFilipiniana) {
   throw new Error('Ember gallery verification failed')
 }
-console.log('Ember Long Gown gallery now has the new cover, original photo 1, and four additional new photos; Filipiniana unchanged')
+console.log('Ember Long Gown gallery now has five new photos followed by original photo 1; Filipiniana unchanged')

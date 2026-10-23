@@ -63,8 +63,8 @@ const newAssetIds = new Set(newLong.map((image) => image.asset._ref))
 const keptLong = existingLong.filter((image) => !removedKeys.has(image._key) && !newAssetIds.has(image.asset?._ref))
 const pixieAssetIds = new Set(newPixie.map((image) => image.asset._ref))
 const keptPixie = (doc.pixiePicture ?? []).filter((image) => !pixieAssetIds.has(image.asset?._ref))
-const longGallery = [newLong[0], ...keptLong, ...newLong.slice(1)]
-const pixieGallery = [newPixie[0], ...keptPixie, ...newPixie.slice(1)]
+const longGallery = [...newLong, ...keptLong]
+const pixieGallery = [...newPixie, ...keptPixie]
 await client.patch(documentId).set({longGownPicture: longGallery, pixiePicture: pixieGallery}).commit()
 
 const updated = await client.getDocument(documentId)
