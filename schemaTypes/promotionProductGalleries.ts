@@ -1,3 +1,4 @@
+import {addOnTypeOptions} from './addOnCategories'
 import {ImagesIcon} from '@sanity/icons/Images'
 import {PackageIcon} from '@sanity/icons/Package'
 import {defineArrayMember, defineField, defineType} from 'sanity'
@@ -27,32 +28,6 @@ const addOnSortOptions = [
   {title: 'Price: Low to High', value: 'price-low-high'},
   {title: 'Price: High to Low', value: 'price-high-low'},
 ]
-
-const addOnCategoryLabels: Record<string, string> = {
-  crown: 'Crowns & Headpieces',
-  headpiece: 'Handmade Headpieces',
-  wig: 'Wigs',
-  prop: 'Props',
-}
-
-const addOnTypeOptions = [
-  'hood',
-  'petticoat',
-  'crown',
-  'headpiece',
-  'wig',
-  'prop',
-  'fan',
-  'gloves',
-  'mask',
-  'necklace',
-  'umbrella',
-  'train',
-  'wings',
-].map((value) => ({
-  title: addOnCategoryLabels[value] || value.replace(/\b\w/g, (letter) => letter.toUpperCase()),
-  value,
-}))
 
 const isMode = (parent: unknown, mode: 'manual' | 'filters') =>
   (parent as {selectionMode?: string} | undefined)?.selectionMode === mode
