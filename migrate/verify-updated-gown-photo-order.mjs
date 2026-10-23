@@ -18,6 +18,7 @@ const galleries = [
   ['Lucia', 'Long Version', 'longGownPicture', 'Lucia/Long Version'],
   ['Lucia', 'Pixie Version', 'pixiePicture', 'Lucia/Pixie Version'],
   ['Margareth', '', 'longGownPicture', 'Margareth/Long'],
+  ['Scarlet Nova', '', 'pixiePicture', 'Scarlet Nova/Pixie'],
 ]
 
 const {getCliClient} = await import('sanity/cli')
@@ -27,7 +28,7 @@ for (const [name, folder, field, keyPrefix] of galleries) {
   if (name === 'Ember') filenames = filenames.filter((filename) => filename !== 'DSC02672(1).jpg') // Duplicate of DSC02672.jpg.
   filenames.sort((a, b) => Number(!/^cover\./i.test(a)) - Number(!/^cover\./i.test(b)) || a.localeCompare(b))
   const expectedKeys = filenames.map((filename) => createHash('sha1').update(`${keyPrefix}/${filename}`).digest('hex').slice(0, 12))
-  const doc = await client.getDocument(`gown-temp-${name.toLowerCase()}`)
+  const doc = await client.getDocument(`gown-temp-${name.toLowerCase().replaceAll(' ', '-')}`)
   if (!doc) throw new Error(`Missing gown: ${name}`)
   const actualKeys = (doc[field] ?? []).map((image) => image._key)
   if (JSON.stringify(actualKeys.slice(0, expectedKeys.length)) !== JSON.stringify(expectedKeys)) {
