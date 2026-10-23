@@ -24,6 +24,7 @@ const galleries = [
   ['Tinkermist', '', 'pixiePicture', 'Tinkermist/Pixie'],
   ['Tinkerose', '', 'pixiePicture', 'Tinkerose/Pixie'],
   ['Penelope', '', 'longGownPicture', 'Penelope/Long'],
+  ['Giselle', '', 'longGownPicture', 'Giselle/Long'],
 ]
 
 const {getCliClient} = await import('sanity/cli')
@@ -31,6 +32,7 @@ const client = getCliClient({apiVersion: '2026-01-01'})
 for (const [name, folder, field, keyPrefix] of galleries) {
   let filenames = (await readdir(path.join(root, name, folder))).filter((filename) => /\.(jpe?g|png|webp)$/i.test(filename))
   if (name === 'Ember') filenames = filenames.filter((filename) => filename !== 'DSC02672(1).jpg') // Duplicate of DSC02672.jpg.
+  if (name === 'Giselle') filenames = filenames.filter((filename) => !filename.startsWith('DYB')) // Outside the annotated five-photo set.
   filenames.sort((a, b) => Number(!/^cover\./i.test(a)) - Number(!/^cover\./i.test(b)) || a.localeCompare(b))
   const expectedKeys = filenames.map((filename) => createHash('sha1').update(`${keyPrefix}/${filename}`).digest('hex').slice(0, 12))
   const doc = await client.getDocument(`gown-temp-${name.toLowerCase().replaceAll(' ', '-')}`)
