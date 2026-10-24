@@ -4,8 +4,11 @@ import {createHash} from 'node:crypto'
 import path from 'node:path'
 
 const sourceRoot = path.resolve(process.cwd(), '..')
-const csvPath = path.join(sourceRoot, 'WEBSITE UPLOAD DATA - ADD ONS.csv')
-const photoRoot = path.join(sourceRoot, 'Rush Website Update', 'ADD ONS', 'New Uploads')
+const batch2 = process.argv.includes('--batch-2')
+const csvPath = path.join(sourceRoot, batch2 ? 'WEBSITE UPLOAD DATA - ADD ONS BATCH 2.csv' : 'WEBSITE UPLOAD DATA - ADD ONS.csv')
+const photoRoot = batch2
+  ? path.join(sourceRoot, 'Rush Website Update 3')
+  : path.join(sourceRoot, 'Rush Website Update', 'ADD ONS', 'New Uploads')
 const apply = process.argv.includes('--apply')
 
 const folderOverrides = new Map([
@@ -65,7 +68,7 @@ function category(row) {
     case 'Props': return 'prop'
     case 'Neck Accessories':
       if (row.Name === 'Rose Choker') return 'necklace'
-      if (row.Name === 'Ruffled Collar 1') return 'neck collar'
+      if (row.Name === 'Ruffled Collar 1' || row.Name === 'Ruffled Collar 2') return 'neck collar'
   }
   throw new Error(`Unmapped category for ${row.Name}: ${row.Type}`)
 }
@@ -94,10 +97,13 @@ async function inventory() {
     seen.add(row.Name.toLowerCase())
     const type = category(row)
     const group = type === 'wig' ? 'Wigs For Sale' : type === 'prop' ? 'Props' : 'Crowns & Headpieces'
-    const folder = path.join(photoRoot, group, folderOverrides.get(row.Name) ?? row.Name)
-    const files = (await readdir(folder)).filter((file) => /\.(jpe?g|png|webp)$/i.test(file))
+    const folder = batch2
+      ? path.join(photoRoot, row.Name)
+      : path.join(photoRoot, group, folderOverrides.get(row.Name) ?? row.Name)
+    const noPhoto = batch2 && row.Name === 'MH 4 (Medieval Hat)'
+    const files = noPhoto ? [] : (await readdir(folder)).filter((file) => /\.(jpe?g|png|webp)$/i.test(file))
     files.sort((a, b) => Number(!/^cover\./i.test(a)) - Number(!/^cover\./i.test(b)) || a.localeCompare(b))
-    if (!files.length || !/^cover\./i.test(files[0])) throw new Error(`Missing cover photo: ${row.Name}`)
+    if (!noPhoto && (!files.length || !/^cover\./i.test(files[0]))) throw new Error(`Missing cover photo: ${row.Name}`)
     const images = []
     for (const filename of files) {
       const file = path.join(folder, filename)
