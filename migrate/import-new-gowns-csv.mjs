@@ -4,10 +4,15 @@ import {createHash} from 'node:crypto'
 import path from 'node:path'
 
 const sourceRoot = path.resolve(process.cwd(), '..')
-const csvPath = path.join(sourceRoot, 'WEBSITE UPLOAD DATA - NEW GOWNS.csv')
+const csvFilename = process.argv.find((arg) => arg.startsWith('--csv='))?.slice('--csv='.length) ?? 'WEBSITE UPLOAD DATA - NEW GOWNS.csv'
+const csvPath = path.join(sourceRoot, csvFilename)
 const photoRoot = path.join(sourceRoot, 'Rush Website Update', 'GOWN RENTALS', 'New Uploads')
 const apply = process.argv.includes('--apply')
+const withoutPhotos = process.argv.includes('--without-photos')
 const onlyName = process.argv.find((arg) => arg.startsWith('--only='))?.slice('--only='.length)
+if (withoutPhotos && csvFilename !== 'WEBSITE UPLOAD DATA - NEW GOWNS WITHOUT PHOTOS.csv') {
+  throw new Error('--without-photos requires the new gowns without photos CSV')
+}
 
 const photoAssignments = new Map([
   ['Swann', [
@@ -161,10 +166,12 @@ async function inventory() {
     if (!name || seen.has(name.toLowerCase())) throw new Error(`Empty or duplicate gown name: ${name}`)
     seen.add(name.toLowerCase())
     const fields = mapFields(row)
-    const assignments = photoAssignments.get(name) ?? [{folder: name, field: defaultPhotoField(row)}]
     const galleries = {longGownPicture: [], pixiePicture: []}
-    for (const assignment of assignments) galleries[assignment.field].push(...await imagesIn(assignment.folder, assignment.root))
-    if (!galleries.longGownPicture.length && !galleries.pixiePicture.length) throw new Error(`No assigned photos for ${name}`)
+    if (!withoutPhotos) {
+      const assignments = photoAssignments.get(name) ?? [{folder: name, field: defaultPhotoField(row)}]
+      for (const assignment of assignments) galleries[assignment.field].push(...await imagesIn(assignment.folder, assignment.root))
+      if (!galleries.longGownPicture.length && !galleries.pixiePicture.length) throw new Error(`No assigned photos for ${name}`)
+    }
     items.push({name, fields, galleries})
   }
   if (onlyName && !items.length) throw new Error(`Gown not found in CSV: ${onlyName}`)
@@ -180,7 +187,7 @@ if (!apply) process.exit(0)
 const {getCliClient} = await import('sanity/cli')
 const client = getCliClient({apiVersion: '2026-01-01'})
 const names = items.map((item) => item.name)
-const existing = await client.fetch('*[_type == "gown_temp"]{_id,name,"slug":slug.current}', {}, {perspective: 'published'})
+const existing = await client.fetch('*[_type == "gown_temp"]{_id,name,"slug":slug.current,"longPhotos":count(longGownPicture),"pixiePhotos":count(pixiePicture),"filipinianaPhotos":count(filipinianaPicture)}', {}, {perspective: 'published'})
 const desiredSlugs = new Set(items.map((item) => slugify(item.name)))
 const byName = new Map()
 for (const doc of existing) {
@@ -217,6 +224,9 @@ for (const item of items) {
   for (const field of ['longGownPicture', 'pixiePicture']) if (!patch[field]) unset.push(field)
   const current = byName.get(item.name.toLowerCase())
   if (current) {
+    if (withoutPhotos && ((current.longPhotos ?? 0) || (current.pixiePhotos ?? 0) || (current.filipinianaPhotos ?? 0))) {
+      throw new Error(`Refusing to remove existing photos from ${item.name}`)
+    }
     await client.patch(current._id).set(patch).unset(unset).commit()
     console.log(`Updated ${item.name}: ${current._id}`)
   } else {
