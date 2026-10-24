@@ -59,3 +59,20 @@ const expectedPixieKeys = sleepingPixieNames.map((filename) => createHash('sha1'
 const actualPixieKeys = (sleepingBeauty.pixiePicture ?? []).map((image) => image._key)
 if (JSON.stringify(actualPixieKeys) !== JSON.stringify(expectedPixieKeys)) throw new Error('Sleeping Beauty Pixie photo order mismatch')
 console.log('Sleeping Beauty: original Long cover, four new Long photos, two retained Long photos; five new Pixie photos')
+
+const nimfa = await client.getDocument('gown-temp-nimfa')
+if (!nimfa) throw new Error('Missing Nimfa gown')
+const nimfaLongNames = ['Cover.jpg', 'DSC03501.jpg', 'DSC03504.jpg', 'DSC03505.jpg', 'IMG_7766.JPG', 'IMG_7768.JPG']
+const nimfaPixieNames = [
+  'Cover.jpg', '6367838.jpg',
+  '858009942_18118939268105719_4954273605348283954_n.jpg',
+  '858981956_18118939346105719_3564507570228575161_n.jpg',
+  '860335584_18118939157105719_9037633865774571226_n.jpg', 'DSC00446.jpg',
+]
+const nimfaLongKeys = nimfaLongNames.map((filename) => createHash('sha1').update(`Nimfa/Long/${filename}`).digest('hex').slice(0, 12))
+const nimfaPixieKeys = nimfaPixieNames.map((filename) => createHash('sha1').update(`Nimfa/Pixie/${filename}`).digest('hex').slice(0, 12))
+if (JSON.stringify((nimfa.longGownPicture ?? []).map((image) => image._key)) !== JSON.stringify([...nimfaLongKeys, 'e380f90aa1d9', '99f4a0505413']) ||
+    JSON.stringify((nimfa.pixiePicture ?? []).map((image) => image._key)) !== JSON.stringify([...nimfaPixieKeys, 'nimfa-pixie-2'])) {
+  throw new Error('Nimfa Long or Pixie photo order mismatch')
+}
+console.log('Nimfa: six new Long and Pixie photos first; retained originals follow')
