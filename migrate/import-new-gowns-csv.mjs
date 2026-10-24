@@ -7,6 +7,7 @@ const sourceRoot = path.resolve(process.cwd(), '..')
 const csvPath = path.join(sourceRoot, 'WEBSITE UPLOAD DATA - NEW GOWNS.csv')
 const photoRoot = path.join(sourceRoot, 'Rush Website Update', 'GOWN RENTALS', 'New Uploads')
 const apply = process.argv.includes('--apply')
+const onlyName = process.argv.find((arg) => arg.startsWith('--only='))?.slice('--only='.length)
 
 const photoAssignments = new Map([
   ['Swann', [
@@ -22,6 +23,9 @@ const photoAssignments = new Map([
   ['Nerissa', [
     {folder: 'Nerissa/Long Version', field: 'longGownPicture'},
     {folder: 'Nerissa/Pixie Version', field: 'pixiePicture'},
+  ]],
+  ['Plum Fairy', [
+    {folder: 'Plum', root: path.join(sourceRoot, 'Rush Website Update 2'), field: 'pixiePicture'},
   ]],
 ])
 
@@ -132,8 +136,8 @@ function defaultPhotoField(row) {
   return 'longGownPicture'
 }
 
-async function imagesIn(folder) {
-  const fullPath = path.join(photoRoot, folder)
+async function imagesIn(folder, root = photoRoot) {
+  const fullPath = path.join(root, folder)
   const files = (await readdir(fullPath)).filter((file) => /\.(jpe?g|png|webp|heic)$/i.test(file))
   files.sort((a, b) => Number(!/^cover\./i.test(a)) - Number(!/^cover\./i.test(b)) || a.localeCompare(b))
   if (!files.length) throw new Error(`No photos found in ${folder}`)
@@ -142,7 +146,7 @@ async function imagesIn(folder) {
     const file = path.join(fullPath, filename)
     if ((await stat(file)).size > 50 * 1024 * 1024) throw new Error(`Image exceeds 50 MiB: ${file}`)
     const buffer = await readFile(file)
-    results.push({file, filename, relativePath: path.relative(photoRoot, file), sha1: createHash('sha1').update(buffer).digest('hex')})
+    results.push({file, filename, relativePath: path.relative(root, file), sha1: createHash('sha1').update(buffer).digest('hex')})
   }
   return results
 }
@@ -153,15 +157,17 @@ async function inventory() {
   const items = []
   for (const row of rows) {
     const name = row[0].trim()
+    if (onlyName && name.toLowerCase() !== onlyName.toLowerCase()) continue
     if (!name || seen.has(name.toLowerCase())) throw new Error(`Empty or duplicate gown name: ${name}`)
     seen.add(name.toLowerCase())
     const fields = mapFields(row)
     const assignments = photoAssignments.get(name) ?? [{folder: name, field: defaultPhotoField(row)}]
     const galleries = {longGownPicture: [], pixiePicture: []}
-    for (const assignment of assignments) galleries[assignment.field].push(...await imagesIn(assignment.folder))
+    for (const assignment of assignments) galleries[assignment.field].push(...await imagesIn(assignment.folder, assignment.root))
     if (!galleries.longGownPicture.length && !galleries.pixiePicture.length) throw new Error(`No assigned photos for ${name}`)
     items.push({name, fields, galleries})
   }
+  if (onlyName && !items.length) throw new Error(`Gown not found in CSV: ${onlyName}`)
   return items
 }
 
