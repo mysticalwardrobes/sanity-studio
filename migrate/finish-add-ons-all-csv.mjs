@@ -8,8 +8,8 @@ const apply = process.argv.includes('--apply')
 const targets = [
   {csvName: 'Inner set 1 (Inner top, inner skirt and White ruffled wrist cuffs)', liveName: 'Inner set 1 (Inner top, inner skirt and White ruffled wrist cuffs)', type: 'inner garment', create: true, folder: 'STYLE EXTENSION/New Uploads/Inner set 1 (Inner top, inner skirt and White ruffled wrist cuffs)'},
   {csvName: 'Dalmatian Fur Coat', liveName: 'Dalmatian Fur Coat', type: 'outerwear', create: true, folder: 'STYLE EXTENSION/New Uploads/Dalmatian Fur Coat'},
-  {csvName: 'Wings 1', liveName: 'Wings Holographic 1', type: 'wings', folder: 'ADD ONS AND STYLE EXTNSIONS/Wings 1'},
-  {csvName: 'Wings 2', liveName: 'Wings Holographic 2', type: 'wings', folder: 'STYLE EXTENSION/Photo andor details Updates/Wings 2'},
+  {csvName: 'Wings 1', liveName: 'Wings Holographic 1', type: 'wings', folder: 'ADD ONS AND STYLE EXTNSIONS/Wings 1', preserveExistingPrices: true},
+  {csvName: 'Wings 2', liveName: 'Wings Holographic 2', type: 'wings', folder: 'STYLE EXTENSION/Photo andor details Updates/Wings 2', preserveExistingPrices: true},
 ]
 
 function parseCsv(source) {
@@ -61,7 +61,7 @@ for (const item of targets) {
         key: createHash('sha1').update(`${item.folder}/${filename}`).digest('hex').slice(0, 12)})
     }
   }
-  console.log(`${item.csvName} → ${item.liveName}: ${JSON.stringify(item.values)}, ${item.images?.length ?? 0} new photos`)
+  console.log(`${item.csvName} → ${item.liveName}: ${item.preserveExistingPrices ? 'preserve existing prices' : JSON.stringify(item.values)}, ${item.images?.length ?? 0} new photos`)
 }
 if (!apply) process.exit(0)
 
@@ -87,7 +87,7 @@ for (const item of targets) {
   }
   const current = doc ?? await client.fetch('*[_type == "addOns" && name == $name][0]{_id,name,type,pictures,description,metroManilaRate,luzonRate,outsideLuzonRate,forSaleRate}', {name: item.liveName}, {perspective: 'published'})
   const set = {}, unset = []
-  for (const [field, value] of Object.entries(item.values)) {
+  for (const [field, value] of Object.entries(item.preserveExistingPrices ? {} : item.values)) {
     if (value === undefined) {
       if (current[field] !== undefined && current[field] !== null) unset.push(field)
     } else if (current[field] !== value) set[field] = value
@@ -121,7 +121,7 @@ for (const item of targets) {
   const updated = await client.getDocument(current._id)
   const identity = (pictures) => (pictures ?? []).map((picture) => `${picture._key}:${picture.asset?._ref}`)
   if (updated.name !== item.liveName || updated.type !== item.type ||
-      Object.entries(item.values).some(([field, value]) => (updated[field] ?? undefined) !== value) ||
+      Object.entries(item.preserveExistingPrices ? {} : item.values).some(([field, value]) => (updated[field] ?? undefined) !== value) ||
       JSON.stringify(identity(updated.pictures)) !== JSON.stringify(identity(gallery)) ||
       (!item.create && JSON.stringify(updated.description ?? []) !== JSON.stringify(current.description ?? []))) {
     throw new Error(`Verification failed: ${item.liveName}`)
