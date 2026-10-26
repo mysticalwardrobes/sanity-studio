@@ -8,7 +8,7 @@ const apply = process.argv.includes('--apply')
 const targets = [
   {csvName: 'Inner set 1 (Inner top, inner skirt and White ruffled wrist cuffs)', liveName: 'Inner set 1 (Inner top, inner skirt and White ruffled wrist cuffs)', type: 'inner garment', create: true, folder: 'STYLE EXTENSION/New Uploads/Inner set 1 (Inner top, inner skirt and White ruffled wrist cuffs)'},
   {csvName: 'Dalmatian Fur Coat', liveName: 'Dalmatian Fur Coat', type: 'outerwear', create: true, folder: 'STYLE EXTENSION/New Uploads/Dalmatian Fur Coat'},
-  {csvName: 'Wings 1', liveName: 'Wings Holographic 1', type: 'wings'},
+  {csvName: 'Wings 1', liveName: 'Wings Holographic 1', type: 'wings', folder: 'ADD ONS AND STYLE EXTNSIONS/Wings 1'},
   {csvName: 'Wings 2', liveName: 'Wings Holographic 2', type: 'wings', folder: 'STYLE EXTENSION/Photo andor details Updates/Wings 2'},
 ]
 
